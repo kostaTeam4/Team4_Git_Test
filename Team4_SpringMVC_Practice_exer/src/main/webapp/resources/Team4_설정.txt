@@ -1,0 +1,158 @@
+[Team4_Project 설정]
+1. 프로젝트 생성 방법 설정 
+   - Spring Legacy Project
+   - Dynamic Web Project
+   위의 둘 중에 
+   - Spring Legacy Project 선택
+
+2. 프로젝트명 설정
+   - "Team4_SpringMVC_Practice"
+
+3. 패키지 명 및 클래스 설정
+   * controller 패키지명 설정
+   - "kr.co.emp.controller > EmpController.java"
+   -                       > IndexController.java
+
+   * dao 패키지명 설정
+   - "kr.co.emp.DAO > EmpDAO 인터페이스 생성"
+	dao.interface 생성
+	dao 필요 함수명 생성
+
+   * dto 패키지명 설정
+   - "kr.co.emp.DTO > EmpDTO.java
+	dto.java 생성
+	dto 매개변수 및 getter/setter 생성
+
+   * mapper 패키지명 설정
+   - "kr.co.emp.Mapper > EmpDAO_mapper.xml 생성
+   - mapper.xml의 namesapce 및 id 값을 EmpDAO와 맞춰서 작성 	
+
+4. pom.xml => 필요 jar(maven) 추가
+ 		<!-- Tiles 사용하기 위해 추가 -->	
+		<dependency> <!-- Tiles API -->
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-api</artifactId>
+			<version>2.2.2</version>
+		</dependency>
+		<dependency> <!--Tiles JSP Support -->
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-jsp</artifactId>
+			<version>2.2.2</version>
+		</dependency>	
+		<!-- 직접 등록한 oracle 추가 -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc</artifactId>
+			<version>11</version>
+		</dependency>
+		<!-- Spring 추가 작업 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>		
+		<!-- Mybatis  Spring -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<!-- Mybstis -->
+          	 <dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>3.1.1</version>
+		</dependency> 
+		<!-- JSTL 추가  -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>		
+	
+5. web.xml 설정 
+    - URL Mapping 설정
+      <servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>*.htm</url-pattern>
+	</servlet-mapping>
+ 		
+    - 한글처리를 위한 필터 추가
+	<!-- Filter 추가 -->
+	<filter>
+		<filter-name>EncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+			<filter-name>EncodingFilter</filter-name>
+			<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+6. root-context.xml 설정
+    - db연결 
+      <bean id="driverManagerDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+  		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+  		<property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"></property>
+  		<property name="username" value="kosta"></property>
+  		<property name="password" value="1004"></property>
+  	  </bean> 
+      
+	- factorybean 생성 및 sql Session template 추가
+ 	 <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+ 		<property name="dataSource" ref="driverManagerDataSource" />
+ 		<property name="mapperLocations" 
+ 		          value="classpath*:kr/co/emp/Mapper/*xml"/>
+ 	</bean>
+ 	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+ 		<constructor-arg index="0" ref="sqlSessionFactoryBean"></constructor-arg>
+ 	</bean>
+
+7. Tiles.xml 설정
+ 	<tiles-definitions>
+ 	 <!--return home(main).index --> 
+	 <!-- definition 정의된 순서도 중요함  -->
+	 <definition name="home.*" template="/WEB-INF/views/inc/layout.jsp">
+		<put-attribute name="header"  value="/WEB-INF/views/inc/header.jsp"/>
+		<put-attribute name="footer"  value="/WEB-INF/views/inc/footer.jsp"/>		
+		<put-attribute name="content" value="/WEB-INF/views/{1}.jsp"/>	
+	 </definition>
+	 
+	 <!--return 게시판, 회원관련 페이지  -->
+	 <definition name="*.*" template="/WEB-INF/views/{1}/inc/layout.jsp">
+		<put-attribute name="title"   value="kosta {1}"/>
+		<put-attribute name="header"  value="/WEB-INF/views/inc/header.jsp"/>
+		<!--css 파일 사용하기 -->
+		<put-attribute name="css"     value="{2}.css"/>
+		<!--customer css를 사용하겠다, joinus의 css를 사용하겠다는 의미  -->
+		
+		<put-attribute name="footer"  value="/WEB-INF/views/inc/footer.jsp"/>
+		<put-attribute name="aside"   value="/WEB-INF/views/{1}/inc/aside.jsp"/>
+		<put-attribute name="visual"  value="/WEB-INF/views/{1}/inc/visual.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp"/>	
+	 </definition> 
+   </tiles-definitions>
+
+
+7. servlet-context.xml 설정
+	- tiles설정
+      <!-- Tiles 설정 하기  -->
+	  <beans:bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+		<beans:property name="definitions">
+			<!--Tiles를 구성하는 xml 파일이 여러개 있을 수 있으므로 collection 제공  -->
+			<beans:list>
+				<beans:value>/WEB-INF/Tiles.xml</beans:value>			
+			</beans:list>	
+		</beans:property>
+	  </beans:bean>
+	
+	  <!--Tiles의 Urlbase를 위한 viewResolve 설정하기  -->
+	  <beans:bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>	
+	  </beans:bean>
+
+	- component-scan설정
+      <context:component-scan base-package="kr.co.emp" />
