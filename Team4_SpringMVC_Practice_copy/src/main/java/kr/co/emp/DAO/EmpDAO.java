@@ -9,6 +9,7 @@ import kr.co.emp.DTO.EmpDTO;
 public interface EmpDAO {
 	
 	//CRUD 작업 김지민
+	//주석 111
 	
 	//1.emp회원 전체 조회(multi row)
 	List<EmpDTO> getAllEmplist(HashMap maps)throws SQLException, ClassNotFoundException;
