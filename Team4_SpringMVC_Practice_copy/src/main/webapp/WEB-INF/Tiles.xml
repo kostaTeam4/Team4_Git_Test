@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+       
+ <tiles-definitions>
+ 		
+ 	<!-- 추후 수정 예정  -->	
+ 	 <!--return home(main).index --> 
+	 <!-- definition 정의된 순서도 중요함  -->
+	 <definition name="home.*" template="/WEB-INF/views/inc/layout.jsp">
+		<put-attribute name="header"  value="/WEB-INF/views/inc/header.jsp"/>
+		<put-attribute name="footer"  value="/WEB-INF/views/inc/footer.jsp"/>		
+		<put-attribute name="content" value="/WEB-INF/views/{1}.jsp"/>	
+	 </definition>
+	 
+	 <!--return 게시판, 회원관련 페이지  -->
+	 <definition name="*.*" template="/WEB-INF/views/{1}/inc/layout.jsp">
+		<put-attribute name="title"   value="kosta {1}"/>
+		<put-attribute name="header"  value="/WEB-INF/views/inc/header.jsp"/>
+		<!--css 파일 사용하기 -->
+		<put-attribute name="css"    value="{2}.css"/>
+		<!--customer css를 사용하겠다, joinus의 css를 사용하겠다는 의미  -->
+		
+		<put-attribute name="footer"  value="/WEB-INF/views/inc/footer.jsp"/>
+		<put-attribute name="aside"   value="/WEB-INF/views/{1}/inc/aside.jsp"/>
+		<put-attribute name="visual"  value="/WEB-INF/views/{1}/inc/visual.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp"/>	
+	 </definition>
+ 
+ </tiles-definitions>

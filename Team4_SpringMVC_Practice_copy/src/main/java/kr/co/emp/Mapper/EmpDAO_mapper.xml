@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	[EmpDAO 인터페이스]
+	//1.emp회원 전체 조회(multi row)
+	List<EmpDTO> getAllEmplist(HashMap maps) throws SQLException, ClassNotFoundException;
+	
+	//2.emp회원 1건(single row)_상세조회
+	EmpDTO getEmp(int empno) throws SQLException, ClassNotFoundException;
+	
+	//3.emp회원 추가(insert)
+	int insertEmp(EmpDTO empDto) throws SQLException, ClassNotFoundException;
+	
+	//4.emp회원 삭제(delete)
+	int deleteEmp(int empDto) throws SQLException, ClassNotFoundException;
+	
+	//5.emp회원 수정(update_ 사원이름, 직종, 급여)
+	int updateEmp(EmpDTO empDto) throws SQLException, ClassNotFoundException;
+	
+	//6. emp회원 전체 사원 수
+	int getEmpCount() throws SQLException, ClassNotFoundException;
+  -->
+
+<mapper namespace="kr.co.emp.DAO.EmpDAO">
+
+	<!-- 1.emp회원 전체 조회(multi row)_getAllEmplist  -->
+	<select id="getAllEmplist" parameterType="hashMap" resultType="kr.co.emp.DTO.EmpDTO" >
+		<!-- select empno, ename, job, sal, hiredate, comm, deptno, mgr from
+		(
+			select rownum rnum, e.* from (select * from emp 
+										  order by empno desc
+										 )e
+		)where rnum between (1 + (#{page} - 1) * 5) and (5 + (#{page} - 1) * 5)  -->	
+		 select empno, ename, job, sal, hiredate, comm, deptno, mgr from
+	      	(
+	      		select rownum rnum, e.* from (
+	      	   							 select * from emp 
+	      	   							 order by empno desc	
+	      	                           	) e
+	      					
+	      	) where rnum >= #{start} and rnum &lt;= #{end}		
+	</select>
+
+	<!-- 2. emp회원 1건(single row)_상세조회_getEmp  -->
+	<select id="getEmp" resultType="kr.co.emp.DTO.EmpDTO">
+		select empno, ename, job, sal, hiredate, comm, deptno, mgr 
+		from emp
+		where empeno=#{empno}		
+	</select>
+	
+	<!-- 3. emp회원 추가(insert)_insertEmp  -->
+	<insert id="insertEmp" parameterType="kr.co.emp.DTO.EmpDTO">
+		insert into emp(empno, ename, job, sal, hiredate, comm, deptno,mgr)
+		values(#{empno}, #{ename}, #{job}, #{sal}, sysdate, #{comm}, #{deptno}, #{mgr})
+	</insert>
+	
+	<!-- 4. emp회원 삭제(delete)_deleteEmp -->
+	<delete id="deleteEmp" parameterType="Integer">
+		delete from emp where empno=#{empno}
+	</delete>
+	
+	
+	<!-- 5.emp회원 수정(update_ 사원이름, 직종, 급여)_updateEmp  -->
+	<update id="updateEmp" parameterType="kr.co.emp.DTO.EmpDTO">
+		update emp set ename=#{ename}, job=#{job}, sal=#{sal} where empno=#{empno}		
+	</update>
+	
+	
+	<!-- 6. emp회원 전체 사원 수_ -->
+	<select id="getEmpCount" resultType="Integer">
+		select count(*) from emp
+	</select>
+	
+	
+	
+
+
+
+
+
+
+</mapper>
