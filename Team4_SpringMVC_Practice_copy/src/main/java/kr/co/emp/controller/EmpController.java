@@ -46,7 +46,7 @@ public class EmpController {
 	public String getAllEmplist(String pg, Model model) throws ClassNotFoundException, SQLException
 	{
 		System.out.println("emp 사원 전체 목록");
-		
+		System.out.println("사원 전체 목록");
 		int page=1;
 		String Strpg = pg;
 		if(Strpg != null)
