@@ -21,6 +21,8 @@ public class EmpController {
 	@Autowired
 	private SqlSession sqlSession;
 	
+	//Git 테스트 코드
+	
 	//1.emp회원 전체 조회(multi row)
 	//@RequestMapping("/empList.htm")
 	/*public String getAllEmplist(String pg, Model model) throws ClassNotFoundException, SQLException
